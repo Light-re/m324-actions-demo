@@ -38,4 +38,10 @@ class TaskServiceTest {
         assertTrue(service.erledigen("Test schreiben"));
         assertEquals(1, service.anzahlOffen());
     }
+
+    @Test
+    @DisplayName("Eine leere Beschreibung wird abgelehnt")
+    void leereBeschreibungWirdAbgelehnt() {
+        assertThrows(IllegalArgumentException.class, () -> service.hinzufuegen("   "));
+    }
 }
