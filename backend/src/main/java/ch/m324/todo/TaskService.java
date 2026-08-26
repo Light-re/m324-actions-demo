@@ -18,6 +18,15 @@ public class TaskService {
         return List.copyOf(tasks);
     }
 
+    /** Liefert nur die noch offenen Aufgaben. */
+    public List<Task> offene() {
+        List<Task> ergebnis = new ArrayList<>();
+        for (Task t : tasks) {
+            ergebnis.add(t);          // Bug: die Filterbedingung fehlt
+        }
+        return ergebnis;
+    }
+
     public int anzahlOffen() {
         return (int) tasks.stream().filter(t -> !t.isErledigt()).count();
     }

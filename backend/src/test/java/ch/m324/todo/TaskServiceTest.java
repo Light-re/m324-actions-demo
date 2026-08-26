@@ -38,4 +38,15 @@ class TaskServiceTest {
         assertTrue(service.erledigen("Test schreiben"));
         assertEquals(1, service.anzahlOffen());
     }
+
+    @Test
+    @DisplayName("Der Filter liefert nur unerledigte Aufgaben")
+    void filterLiefertNurOffeneAufgaben() {
+        service.hinzufuegen("Folien fertig machen");
+        service.hinzufuegen("Demo ueben");
+        service.erledigen("Folien fertig machen");
+
+        assertEquals(1, service.offene().size());
+        assertEquals("Demo ueben", service.offene().get(0).getBeschreibung());
+    }
 }
