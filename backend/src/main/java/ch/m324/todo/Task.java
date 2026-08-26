@@ -7,6 +7,9 @@ public class Task {
     private boolean erledigt;
 
     public Task(String beschreibung) {
+        if (beschreibung == null || beschreibung.isBlank()) {
+            throw new IllegalArgumentException("Beschreibung darf nicht leer sein");
+        }
         this.beschreibung = beschreibung;
         this.erledigt = false;
     }
