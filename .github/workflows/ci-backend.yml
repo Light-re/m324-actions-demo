@@ -1,0 +1,57 @@
+# Modul 324 - CI-Pipeline fuer das Spring-Boot-Backend der Todo-App
+# Ablage: .github/workflows/ci-backend.yml
+name: CI-Backend
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Der Testreport darf einen Check am Commit anlegen
+permissions:
+  checks: write
+  contents: read
+
+jobs:
+  build:
+    name: Build und Test (Backend)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: JDK 21 einrichten
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven          # spart bei jedem Lauf den Download der Abhaengigkeiten
+
+      - name: Tests ausfuehren
+        run: mvn -B test --file pom.xml
+
+      - name: Testreport veroeffentlichen
+        uses: dorny/test-reporter@v1
+        if: always()            # Report auch dann, wenn ein Test fehlschlaegt
+        with:
+          name: Maven Tests
+          path: backend/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      - name: Paket bauen
+        if: success()
+        run: mvn -B package -DskipTests --file pom.xml
+
+      - name: Artefakt hochladen
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/target/*.jar
+          retention-days: 7
